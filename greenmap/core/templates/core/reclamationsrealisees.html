@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Réclamations réalisées - GreenMap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #013220, #0b4d1c);
+      color: #FFD700;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: linear-gradient(135deg, #16610E, #FED16A);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+      box-shadow: 2px 0 8px rgba(22, 97, 14, 0.4);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .sidebar h2 {
+      color: #FFD700;
+      font-weight: 600;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 3px #000000a0;
+    }
+
+    .search-box input[type="search"] {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 12px;
+      border: none;
+      background-color: #145214;
+      color: #e6ee9c;
+      font-size: 1rem;
+      box-shadow: inset 0 0 6px #689f3860;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      background-color: #1b7d1f;
+      box-shadow: inset 0 0 8px #d4e157;
+    }
+
+    .sidebar nav a {
+      display: block;
+      padding: 12px 18px;
+      background-color: #145214;
+      color: #e6ee9c;
+      border-radius: 10px;
+      font-weight: 500;
+      margin-top: 10px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .sidebar nav a:hover {
+      background-color: #1b7d1f;
+      color: #fffde7;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px 60px;
+      overflow-y: auto;
+      background: rgba(3, 64, 26, 0.85);
+      box-shadow: inset 0 0 40px #145214;
+      border-radius: 20px 0 0 20px;
+      color: #e6ee9c;
+      position: relative;
+    }
+
+    .main-content h1 {
+      font-size: 2.4rem;
+      margin-bottom: 30px;
+      color: #FFD700;
+      font-weight: 600;
+      text-shadow: 1px 1px 3px #000000a0;
+    }
+
+    .reclamation {
+      background-color: #FFF9C4;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px #689f3860;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .reclamation img {
+      width: 150px;
+      height: 110px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid #228B22;
+    }
+
+    .reclamation .no-image {
+      width: 150px;
+      height: 110px;
+      background: #dcedc8;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #558b2f;
+      font-style: italic;
+      border: 2px solid #228B22;
+    }
+
+    .details h3 {
+      color: #2e7d32;
+      font-size: 1.4rem;
+      margin-bottom: 5px;
+    }
+
+    .details p {
+      margin: 4px 0;
+    }
+
+    .auth-buttons-container {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .auth-btn, .logout-btn {
+      background: linear-gradient(45deg, #2e8b57, #228B22);
+      color: #f1f8e9;
+      font-weight: 600;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px #1c741cb0;
+      text-decoration: none;
+    }
+
+    .auth-btn:hover, .logout-btn:hover {
+      background: linear-gradient(45deg, #1c741c, #145214);
+    }
+
+    form.logout-form {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <h2>Menu</h2>
+    <div class="search-box">
+      <input type="search" placeholder="Rechercher..." />
+    </div>
+    <nav>
+      <a href="{% url 'accueil' %}">Accueil</a>
+      <a href="{% url 'mesreclamation' %}">Mes réclamations</a>
+      <a href="{% url 'reclamationsrealisees' %}">Réclamations réalisées</a>
+    </nav>
+
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'LogoutPage' %}" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Déconnexion</button>
+      </form>
+    {% endif %}
+  </aside>
+
+  <main class="main-content">
+    <h1>Réclamations réalisées</h1>
+
+    {% if reclamations %}
+      {% for rec in reclamations %}
+        <div class="reclamation">
+          {% if rec.image %}
+            <img src="{{ rec.image.url }}" alt="Image réclamation" />
+          {% else %}
+            <div class="no-image">Pas d'image</div>
+          {% endif %}
+          <div class="details">
+            <h3>{{ rec.get_type_reclamation_display }}</h3>
+            <p><strong>Localisation :</strong> {{ rec.localisation }} ({{ rec.postal_code }})</p>
+            <p>{{ rec.description|truncatechars:100 }}</p>
+            <p><small>Signalée le {{ rec.date_creation|date:"d/m/Y H:i" }}</small></p>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>Aucune réclamation enregistrée.</p>
+    {% endif %}
+  </main>
+
+  {% if not user.is_authenticated %}
+    <div class="auth-buttons-container">
+      <a href="{% url 'LoginPage' %}" class="auth-btn">Login</a>
+      <a href="{% url 'SignupPage' %}" class="auth-btn">Signup</a>
+    </div>
+  {% endif %}
+
+</body>
+</html>

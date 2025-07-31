@@ -56,8 +56,8 @@ def save_point(request):
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'}, status=405)
 
 @login_required(login_url='login')
-def HomePage(request):
-    return render (request,'core/reclamation.html')
+def ADDreclamation(request):
+    return render (request,'core/ADDreclamation.html')
 
 
 def SignupPage(request):
@@ -96,7 +96,7 @@ def LoginPage(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('homecitoyen')
+                return redirect('accueil')
             else:
                 messages.error(request, "Identifiants invalides pour citoyen")
                 return redirect('login')
@@ -120,9 +120,15 @@ def LoginPage(request):
 
 
 @login_required(login_url='login')
-def homecitoyen(request):
+def accueil(request):
+    return render(request, 'core/accueil.html')
+
+def mesreclamation(request):
+    return render(request, 'core/mesreclamations.html')
+
+def reclamationsrealisees(request):
+    return render(request, 'core/reclamationsrealisees.html')
     
-    return render(request, 'core/homecitoyen.html')
 
 def LogoutPage(request):
     logout(request)

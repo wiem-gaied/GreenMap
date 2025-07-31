@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accueil Citoyen - GreenMap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset basique */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #013220, #0b4d1c);
+      color: #FFD700;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: rgba(3, 64, 26, 0.85);
+      padding: 25px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
+      min-height: 100vh;
+      position: relative;
+    }
+    .sidebar h2 {
+      color: #FFD700;
+      font-weight: 600;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 3px #000000a0;
+      margin-bottom: 10px;
+    }
+    .sidebar nav a {
+      display: block;
+      padding: 12px 18px;
+      margin-bottom: 10px;
+      background-color: #145214;
+      color: #e6ee9c;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 500;
+      box-shadow: inset 0 0 6px #689f3860;
+      transition: background-color 0.3s ease;
+    }
+    .sidebar nav a:hover {
+      background-color: #1b7d1f;
+      color: #fffde7;
+      box-shadow: inset 0 0 8px #d4e157;
+    }
+    .sidebar .logout-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      padding: 14px;
+      background: linear-gradient(45deg, #8bc34a, #558b2f);
+      color: #fffde7;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 15px #558b2faa;
+      transition: background 0.4s ease;
+    }
+    .sidebar {
+      width: 220px;
+      background: linear-gradient(135deg, #16610E, #FED16A);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+      box-shadow: 2px 0 8px rgba(22, 97, 14, 0.4);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Recherche */
+    .search-box input[type="search"] {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 12px;
+      border: none;
+      background-color: #145214;
+      color: #e6ee9c;
+      font-size: 1rem;
+      box-shadow: inset 0 0 6px #689f3860;
+      margin-bottom: 20px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .search-box input[type="search"]:focus {
+      background-color: #1b7d1f;
+      box-shadow: inset 0 0 8px #d4e157;
+      outline: none;
+      color: #fffde7;
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      padding: 40px 60px;
+      overflow-y: auto;
+      background: rgba(3, 64, 26, 0.85);
+      box-shadow: inset 0 0 40px #145214;
+      border-radius: 20px 0 0 20px;
+      color: #e6ee9c;
+    }
+    .main-content h1 {
+      margin-bottom: 30px;
+      font-weight: 600;
+      font-size: 2.4rem;
+      text-shadow: 1px 1px 3px #000000a0;
+      color: #FFD700;
+    }
+
+    /* Liste réclamations */
+    .reclamation-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .reclamation-item {
+      display: flex;
+      gap: 25px;
+      background-color: #145214;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 4px 15px #33691eee;
+      align-items: center;
+      color: #e6ee9c;
+    }
+
+    .reclamation-image {
+      flex-shrink: 0;
+      width: 180px;
+      height: 130px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 3px solid #8bc34a;
+      background: #0b4d1c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #8bc34a;
+      font-size: 15px;
+      font-style: italic;
+    }
+
+    .reclamation-details {
+      flex-grow: 1;
+    }
+
+    .reclamation-details h3 {
+      margin-bottom: 8px;
+      color: #d4e157;
+      font-weight: 600;
+      text-shadow: 0 0 4px #558b2f;
+      font-size: 1.5rem;
+    }
+
+    .reclamation-details p {
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+      line-height: 1.4;
+      color: #e6ee9c;
+    }
+
+    .description-truncate {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-edit {
+      background: linear-gradient(45deg, #8bc34a, #558b2f);
+      color: #fffde7;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 6px 15px #558b2faa;
+      transition: background 0.4s ease;
+      height: fit-content;
+    }
+    .btn-edit:hover {
+      background: linear-gradient(45deg, #689f38, #33691e);
+      box-shadow: 0 8px 20px #33691eee;
+    }
+
+    /* Bouton + flottant */
+    .btn-add {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      background: linear-gradient(45deg, #ffd700, #d4e157);
+      color: #013220;
+      border: none;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      font-size: 40px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px #d4e157aa;
+      transition: background 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .btn-add:hover {
+      background: linear-gradient(45deg, #f0e130, #aabf24);
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <h2>Menu</h2>
+    <div class="search-box">
+      <input type="search" placeholder="Rechercher..." aria-label="Recherche" />
+    </div>
+    <nav>
+      <a href="{% url 'accueil' %}">Accueil</a>
+      <a href="{% url 'mesreclamation' %}">Mes réclamations</a>
+      <a href="{% url 'reclamationsrealisees' %}">Réclamations réalisées</a>
+    </nav>
+    <form method="post" action="{% url 'LogoutPage' %}">
+      {% csrf_token %}
+      <button type="submit" class="logout-btn">Déconnexion</button>
+    </form>
+  </aside>
+
+  <main class="main-content">
+    <h1>Mes anciennes réclamations</h1>
+    <ul class="reclamation-list" id="reclamationList">
+      {% if reclamations %}
+        {% for rec in reclamations %}
+          <li class="reclamation-item">
+            {% if rec.image %}
+              <img src="{{ rec.image.url }}" alt="Image réclamation" class="reclamation-image" />
+            {% else %}
+              <div class="reclamation-image">Pas d'image</div>
+            {% endif %}
+            <div class="reclamation-details">
+              <h3>{{ rec.type_reclamation }}</h3>
+              <p><strong>Localisation :</strong> {{ rec.localisation }}</p>
+              <p class="description-truncate">{{ rec.description }}</p>
+              <p><small>Signalée le {{ rec.date_creation|date:"d/m/Y" }}</small></p>
+            </div>
+            <button class="btn-edit" onclick="window.location.href='{% url 'ADDreclamation' rec.id %}'">
+              Modifier
+            </button>
+          </li>
+        {% endfor %}
+      {% else %}
+        <li>Aucune réclamation enregistrée.</li>
+      {% endif %}
+    </ul>
+  </main>
+
+  <button class="btn-add" title="Ajouter une réclamation" onclick="window.location.href='{% url 'ADDreclamation' %}'">+</button>
+
+</body>
+</html>
