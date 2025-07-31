@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carte Leaflet - Django</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e8f5e9; 
+    }
+    #map {
+      height: 600px;
+      width: 600px;
+      margin: 20px;
+      display: inline-block;
+      border: 3px solid #228B22; 
+      border-radius: 12px;
+    }
+    #form-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 500px;
+      height: 600px;
+      padding: 10px;
+      background: linear-gradient(135deg, #d0e8d0, #f0f7e0); 
+      box-shadow: 0 4px 15px rgba(34, 139, 34, 0.4); 
+      border-radius: 15px;
+      font-size: 20px;
+      line-height: 1.8;
+      color: #145214;
+      overflow-y: auto;
+      z-index: 1000;
+      border: 2px solid #228B22; 
+    }
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      border: 2px solid #2e7d32; 
+      border-radius: 6px;
+      background-color: #e6f0e6; 
+      color: #145214; 
+      transition: border-color 0.3s ease;
+    }
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #1b4d1b;
+      outline: none;
+      background-color: #d9edc9;
+    }
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      background-color: #228B22; 
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(34, 139, 34, 0.5);
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #1b6d1b; 
+    }
+    /* Conteneur en flex pour champs côte à côte */
+    .flex-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    /* Chaque champ dans la ligne prend environ la moitié */
+    .flex-row > div {
+      flex: 1;
+    }
+    /* Pour les labels */
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #1b4d1b; 
+    }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <div id="form-container">
+    <form id="location-form" enctype="multipart/form-data">
+      <div class="flex-row">
+        <div>
+          <label for="reclamation_type">Type de réclamation :</label>
+          <select id="reclamation_type" name="reclamation_type" required>
+            <option value="">-- Sélectionnez --</option>
+            <option value="pollution">Pollution</option>
+            <option value="dechet">Déchets</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="postal_code">Code postal :</label>
+          <input type="text" id="postal_code" name="postal_code" required />
+        </div>
+      </div>
+
+      <label for="localisation">Localisation (adresse complète) :</label>
+      <input type="text" id="localisation" name="localisation" required />
+
+      <label for="description">Description :</label>
+      <textarea id="description" name="description" rows="4" required></textarea>
+
+      <label for="image">Image :</label>
+      <input type="file" id="image" name="image" accept="image/*" />
+
+      <div class="flex-row">
+        <div>
+          <label for="latitude">Latitude :</label>
+          <input type="text" id="latitude" name="latitude" readonly required />
+        </div>
+        <div>
+          <label for="longitude">Longitude :</label>
+          <input type="text" id="longitude" name="longitude" readonly required />
+        </div>
+      </div>
+
+      <button type="submit">Enregistrer</button>
+    </form>
+  </div>
+
+  <!-- JSON sécurisé injecté depuis Django -->
+  {{ stations|json_script:"stations_json" }}
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const stations = JSON.parse(document.getElementById('stations_json').textContent || '[]');
+      const map = L.map('map').setView([20, 0], 2);
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap',
+      }).addTo(map);
+
+      stations.forEach(station => {
+        L.marker([station.latitude, station.longitude])
+          .addTo(map)
+          .bindPopup(`<strong>${station.station_name}</strong>`);
+      });
+
+      let clickedMarker = null;
+
+      map.on('click', event => {
+        console.log('Carte cliquée:', event.latlng);
+        const lat = Number(event.latlng.lat.toFixed(6));
+        const lng = Number(event.latlng.lng.toFixed(6));
+
+        if (clickedMarker) map.removeLayer(clickedMarker);
+        clickedMarker = L.marker([lat, lng]).addTo(map).bindPopup('Point ajouté').openPopup();
+
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+      });
+
+      document.getElementById('location-form').addEventListener('submit', event => {
+        event.preventDefault();
+
+        const reclamation_type = document.getElementById('reclamation_type').value;
+        const description = document.getElementById('description').value;
+        const localisation = document.getElementById('localisation').value;
+        const postal_code = document.getElementById('postal_code').value;
+        const latitude = parseFloat(document.getElementById('latitude').value);
+        const longitude = parseFloat(document.getElementById('longitude').value);
+        const imageInput = document.getElementById('image');
+        const imageFile = imageInput.files[0];
+
+        if (!latitude || !longitude) {
+          alert('Veuillez cliquer sur la carte pour sélectionner un emplacement.');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('reclamation_type', reclamation_type);
+        formData.append('description', description);
+        formData.append('localisation', localisation);
+        formData.append('postal_code', postal_code);
+        formData.append('latitude', latitude);
+        formData.append('longitude', longitude);
+        if (imageFile) {
+          formData.append('image', imageFile);
+        }
+
+        fetch('/carte/save-point/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: formData,
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              alert('Réclamation enregistrée avec succès !');
+              L.marker([latitude, longitude])
+                .addTo(map)
+                .bindPopup(`<strong>Réclamation</strong><br>${description}`)
+                .openPopup();
+
+              document.getElementById('location-form').reset();
+              document.getElementById('latitude').value = '';
+              document.getElementById('longitude').value = '';
+            } else {
+              alert('Erreur lors de l’enregistrement : ' + (data.message || ''));
+            }
+          })
+          .catch(err => {
+            console.error('Erreur réseau ou serveur:', err);
+            alert('Erreur de communication avec le serveur.');
+          });
+      });
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (const cookie of cookies) {
+            const c = cookie.trim();
+            if (c.startsWith(name + '=')) {
+              cookieValue = decodeURIComponent(c.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    });
+  </script>
+</body>
+</html>

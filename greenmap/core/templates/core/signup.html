@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Signup - GreenMap</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0a2600; /* Vert très foncé */
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .background {
+      width: 430px;
+      height: 520px;
+      position: absolute;
+      transform: translate(-50%,-50%);
+      left: 50%;
+      top: 50%;
+    }
+
+    .background .shape {
+      height: 200px;
+      width: 200px;
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .shape:first-child {
+      background: linear-gradient(#2ecc71, #a3ff00); /* vert à vert-jaune */
+      left: -80px;
+      top: -80px;
+    }
+
+    .shape:last-child {
+      background: linear-gradient(to right, #ffea00, #d4fc79); /* jaune */
+      right: -30px;
+      bottom: -80px;
+    }
+
+    form {
+      height: 600px;
+      width: 450px;
+      background-color: rgba(255,255,255,0.05);
+      position: absolute;
+      transform: translate(-50%,-50%);
+      top: 50%;
+      left: 50%;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 40px rgba(16, 255, 96, 0.4);
+      padding: 50px 35px;
+    }
+
+    form * {
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      outline: none;
+      border: none;
+    }
+
+    form h3 {
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 42px;
+      text-align: center;
+      text-shadow: 0px 0px 6px rgba(30, 255, 0, 0.6);
+      color: rgba(255,255,255,0.4); /* un peu flou */
+    }
+
+    .brand-title {
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      color: rgba(170, 255, 0, 0.3); /* Vert-jaune transparent */
+      text-shadow: 2px 2px 8px rgba(255,255,255,0.1);
+      filter: blur(1px); /* effet non clair */
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    input {
+      display: block;
+      height: 40px;
+      width: 100%;
+      background-color: rgba(255,255,255,0.07);
+      border-radius: 3px;
+      padding: 0 10px;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    ::placeholder {
+      color: #b7ffb7;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      background-color: #a3ff00;
+      color: #042500;
+      padding: 15px 0;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #88e600;
+    }
+
+    a {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: #f4ffb4;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #fff59d;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="background">
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+
+  <form action="" method="post">
+    {% csrf_token %} 
+    <div class="brand-title">GreenMap</div>
+
+    <h3>Signup Here</h3>
+
+    <label for="username">Username</label>
+    <input type="text" placeholder="Username" name="username" id="username" required>
+
+    <label for="email">Email</label>
+    <input type="email" placeholder="Email" name="email" id="email" required>
+
+    <label for="password1">Password</label>
+    <input type="password" placeholder="Password" id="password1" name="password1" required>
+
+    <label for="password2">Confirm Password</label>
+    <input type="password" placeholder="Confirm Password" id="password2" name="password2" required>
+
+    <button type="submit">Signup</button>
+
+    <a href="{% url 'login' %}">I already have an account</a>
+  </form>
+</body>
+</html>

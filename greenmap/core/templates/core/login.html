@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login GreenMap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset basique */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #013220, #0b4d1c);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #FFD700;
+      overflow: hidden;
+    }
+
+    /* Texte de fond */
+    .background-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 250px;
+      font-weight: 900;
+      color: rgba(255, 215, 0, 0.07);
+      user-select: none;
+      pointer-events: none;
+      white-space: nowrap;
+      text-shadow: 6px 6px 20px rgba(0, 0, 0, 0.4);
+      z-index: 0;
+    }
+
+    form {
+      position: relative;
+      z-index: 1;
+      background-color: rgba(3, 64, 26, 0.85);
+      padding: 40px 50px;
+      border-radius: 15px;
+      width: 360px;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    h3 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+      letter-spacing: 1.5px;
+      color: #FFD700;
+      text-shadow: 1px 1px 2px #000000a0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 1rem;
+      color: #cddc39;
+      text-shadow: 0 0 3px #8bc34a;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: none;
+      background-color: #145214;
+      color: #e6ee9c;
+      font-size: 1rem;
+      box-shadow: inset 0 0 6px #689f3860;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    select:hover, input:hover, select:focus, input:focus {
+      background-color: #1b7d1f;
+      box-shadow: inset 0 0 8px #d4e157;
+      outline: none;
+      color: #fffde7;
+    }
+
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 14px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(45deg, #8bc34a, #558b2f);
+      border: none;
+      border-radius: 10px;
+      color: #fffde7;
+      cursor: pointer;
+      box-shadow: 0 6px 15px #558b2faa;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+    button:hover {
+      background: linear-gradient(45deg, #689f38, #33691e);
+      box-shadow: 0 8px 20px #33691eee;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-text">GreenMap</div>
+
+<form method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+  <label for="user_type">Je suis :</label>
+  <select id="user_type" name="user_type" required>
+    <option value="">-- Choisissez --</option>
+    <option value="citoyen">Citoyen</option>
+    <option value="agent">Agent</option>
+  </select>
+
+  <div id="citoyen-fields" style="display:none;">
+    <label for="username">Nom d'utilisateur :</label>
+    <input type="text" id="username" name="username" placeholder="Nom d'utilisateur" />
+    <label for="password">Mot de passe :</label>
+    <input type="password" id="password" name="password" placeholder="Mot de passe" />
+  </div>
+
+  <div id="agent-fields" style="display:none;">
+    <label for="cin">CIN :</label>
+    <input type="text" id="cin" name="cin" placeholder="Entrez votre CIN" />
+  </div>
+
+  <button type="submit">Se connecter</button>
+</form>
+
+<script>
+  const userTypeSelect = document.getElementById('user_type');
+  const citoyenFields = document.getElementById('citoyen-fields');
+  const agentFields = document.getElementById('agent-fields');
+
+  userTypeSelect.addEventListener('change', () => {
+    if (userTypeSelect.value === 'citoyen') {
+      citoyenFields.style.display = 'block';
+      agentFields.style.display = 'none';
+      document.getElementById('username').required = true;
+      document.getElementById('password').required = true;
+      document.getElementById('cin').required = false;
+    } else if (userTypeSelect.value === 'agent') {
+      agentFields.style.display = 'block';
+      citoyenFields.style.display = 'none';
+      document.getElementById('cin').required = true;
+      document.getElementById('username').required = false;
+      document.getElementById('password').required = false;
+    } else {
+      citoyenFields.style.display = 'none';
+      agentFields.style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
