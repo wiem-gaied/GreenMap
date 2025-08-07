@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modifier la réclamation</title>
+
+  <!-- Feuille de style Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
+  <!-- Police Poppins -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f4f3;
+      padding: 20px;
+      color: #013220;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #16610E;
+    }
+
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(22, 97, 14, 0.2);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    textarea,
+    select,
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      background-color: #16610E;
+      color: #fff;
+      padding: 14px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1b7d1f;
+    }
+
+    #map {
+      height: 300px;
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      z-index: 0;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      form {
+        padding: 20px;
+      }
+
+      button {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      form {
+        padding: 15px;
+      }
+
+      input[type="text"],
+      textarea,
+      select,
+      input[type="file"] {
+        padding: 10px;
+        font-size: 0.95rem;
+      }
+
+      button {
+        padding: 12px;
+        font-size: 0.9rem;
+      }
+
+      #map {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Modifier la réclamation</h1>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label for="map">Sélectionnez la position sur la carte :</label>
+    <div id="map"></div>
+    <input type="hidden" name="latitude" id="latitude" value="{{ reclamation.latitude }}">
+    <input type="hidden" name="longitude" id="longitude" value="{{ reclamation.longitude }}">
+
+    <label for="type_reclamation">Type de réclamation :</label>
+    <select name="type_reclamation" id="type_reclamation" required>
+      {% for key, label in type_choices %}
+        <option value="{{ key }}" {% if reclamation.type_reclamation == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="localisation">Localisation :</label>
+    <input type="text" name="localisation" id="localisation" value="{{ reclamation.localisation }}" required />
+
+    <label for="description">Description :</label>
+    <textarea name="description" id="description" rows="5" required>{{ reclamation.description }}</textarea>
+
+    <label for="image">Image (laisser vide pour ne pas changer) :</label>
+    <input type="file" name="image" id="image" />
+
+    <button type="submit">Enregistrer</button>
+  </form>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    const lat = parseFloat(document.getElementById('latitude').value) || 36.8;
+    const lng = parseFloat(document.getElementById('longitude').value) || 10.2;
+
+    const map = L.map('map').setView([lat, lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+    marker.on('dragend', function (e) {
+      const latlng = marker.getLatLng();
+      document.getElementById('latitude').value = latlng.lat.toFixed(6);
+      document.getElementById('longitude').value = latlng.lng.toFixed(6);
+    });
+
+    map.on('click', function (e) {
+      marker.setLatLng(e.latlng);
+      document.getElementById('latitude').value = e.latlng.lat.toFixed(6);
+      document.getElementById('longitude').value = e.latlng.lng.toFixed(6);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Accueil Citoyen - GreenMap</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -18,108 +19,40 @@
       background: linear-gradient(135deg, #013220, #0b4d1c);
       color: #FFD700;
       display: flex;
-      overflow: hidden;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 220px;
-      background: rgba(3, 64, 26, 0.85);
-      padding: 25px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
-      min-height: 100vh;
-      position: relative;
-    }
-    .sidebar h2 {
-      color: #FFD700;
-      font-weight: 600;
-      font-size: 1.8rem;
-      text-shadow: 1px 1px 3px #000000a0;
-      margin-bottom: 10px;
-    }
-    .sidebar nav a {
-      display: block;
-      padding: 12px 18px;
-      margin-bottom: 10px;
-      background-color: #145214;
-      color: #e6ee9c;
-      text-decoration: none;
-      border-radius: 10px;
-      font-weight: 500;
-      box-shadow: inset 0 0 6px #689f3860;
-      transition: background-color 0.3s ease;
-    }
-    .sidebar nav a:hover {
-      background-color: #1b7d1f;
-      color: #fffde7;
-      box-shadow: inset 0 0 8px #d4e157;
-    }
-    .sidebar .logout-btn {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      padding: 14px;
-      background: linear-gradient(45deg, #8bc34a, #558b2f);
-      color: #fffde7;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 6px 15px #558b2faa;
-      transition: background 0.4s ease;
-    }
-    .sidebar {
-      width: 220px;
-      background: linear-gradient(135deg, #16610E, #FED16A);
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-      gap: 20px;
-      box-shadow: 2px 0 8px rgba(22, 97, 14, 0.4);
-      min-height: 100vh;
-      position: relative;
-    }
-
-    /* Recherche */
-    .search-box input[type="search"] {
-      width: 100%;
-      padding: 12px 15px;
-      border-radius: 12px;
-      border: none;
-      background-color: #145214;
-      color: #e6ee9c;
-      font-size: 1rem;
-      box-shadow: inset 0 0 6px #689f3860;
-      margin-bottom: 20px;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .search-box input[type="search"]:focus {
-      background-color: #1b7d1f;
-      box-shadow: inset 0 0 8px #d4e157;
-      outline: none;
-      color: #fffde7;
+      overflow-x: hidden;
     }
 
     /* Main content */
     .main-content {
       flex: 1;
-      padding: 40px 60px;
+      padding: 20px;
       overflow-y: auto;
       background: rgba(3, 64, 26, 0.85);
       box-shadow: inset 0 0 40px #145214;
       border-radius: 20px 0 0 20px;
       color: #e6ee9c;
+      margin: 10px 0;
     }
+
+    @media (min-width: 768px) {
+      .main-content {
+        padding: 40px 60px;
+        margin: 0;
+      }
+    }
+
     .main-content h1 {
       margin-bottom: 30px;
       font-weight: 600;
-      font-size: 2.4rem;
+      font-size: 1.8rem;
       text-shadow: 1px 1px 3px #000000a0;
       color: #FFD700;
+    }
+
+    @media (min-width: 768px) {
+      .main-content h1 {
+        font-size: 2.4rem;
+      }
     }
 
     /* Liste réclamations */
@@ -127,24 +60,39 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 30px;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .reclamation-list {
+        gap: 30px;
+      }
     }
 
     .reclamation-item {
       display: flex;
-      gap: 25px;
+      flex-direction: column;
+      gap: 15px;
       background-color: #145214;
       border-radius: 18px;
-      padding: 20px;
+      padding: 15px;
       box-shadow: 0 4px 15px #33691eee;
-      align-items: center;
       color: #e6ee9c;
+    }
+
+    @media (min-width: 768px) {
+      .reclamation-item {
+        flex-direction: row;
+        gap: 25px;
+        padding: 20px;
+        align-items: center;
+      }
     }
 
     .reclamation-image {
       flex-shrink: 0;
-      width: 180px;
-      height: 130px;
+      width: 100%;
+      height: 180px;
       border-radius: 14px;
       object-fit: cover;
       border: 3px solid #8bc34a;
@@ -157,8 +105,16 @@
       font-style: italic;
     }
 
+    @media (min-width: 768px) {
+      .reclamation-image {
+        width: 180px;
+        height: 130px;
+      }
+    }
+
     .reclamation-details {
       flex-grow: 1;
+      width: 100%;
     }
 
     .reclamation-details h3 {
@@ -166,14 +122,26 @@
       color: #d4e157;
       font-weight: 600;
       text-shadow: 0 0 4px #558b2f;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
+    }
+
+    @media (min-width: 768px) {
+      .reclamation-details h3 {
+        font-size: 1.5rem;
+      }
     }
 
     .reclamation-details p {
       margin-bottom: 8px;
-      font-size: 1.1rem;
+      font-size: 1rem;
       line-height: 1.4;
       color: #e6ee9c;
+    }
+
+    @media (min-width: 768px) {
+      .reclamation-details p {
+        font-size: 1.1rem;
+      }
     }
 
     .description-truncate {
@@ -184,96 +152,285 @@
       text-overflow: ellipsis;
     }
 
+    .reclamation-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .reclamation-actions {
+        flex-direction: row;
+        width: auto;
+        gap: 0;
+      }
+    }
+
     .btn-edit {
       background: linear-gradient(45deg, #8bc34a, #558b2f);
       color: #fffde7;
       border: none;
-      padding: 14px 22px;
+      padding: 12px 18px;
       border-radius: 14px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.9rem;
       box-shadow: 0 6px 15px #558b2faa;
       transition: background 0.4s ease;
       height: fit-content;
+      width: 100%;
+      text-align: center;
     }
+
+    @media (min-width: 768px) {
+      .btn-edit {
+        padding: 14px 22px;
+        font-size: 1rem;
+        width: auto;
+      }
+    }
+
     .btn-edit:hover {
       background: linear-gradient(45deg, #689f38, #33691e);
       box-shadow: 0 8px 20px #33691eee;
     }
 
+    .btn-delete {
+      background: linear-gradient(45deg, #f44336, #d32f2f) !important;
+      color: #fffde7 !important;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 6px 15px #d32f2faa !important;
+      transition: background 0.4s ease;
+      height: fit-content;
+      margin-left: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .btn-delete {
+        padding: 14px 22px;
+        font-size: 1rem;
+        margin-left: 10px;
+        width: auto;
+      }
+    }
+
+    .btn-delete:hover {
+      background: linear-gradient(45deg, #d32f2f, #b71c1c) !important;
+      box-shadow: 0 8px 20px #b71c1cee !important;
+    }
+
     /* Bouton + flottant */
     .btn-add {
       position: fixed;
-      bottom: 40px;
-      right: 40px;
+      bottom: 20px;
+      right: 20px;
       background: linear-gradient(45deg, #ffd700, #d4e157);
       color: #013220;
       border: none;
-      width: 70px;
-      height: 70px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      font-size: 40px;
+      font-size: 30px;
       cursor: pointer;
       box-shadow: 0 6px 20px #d4e157aa;
-      transition: background 0.4s ease;
+      transition: all 0.4s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       user-select: none;
+      text-decoration: none;
+      z-index: 1000;
     }
+
+    @media (min-width: 768px) {
+      .btn-add {
+        width: 70px;
+        height: 70px;
+        font-size: 40px;
+        bottom: 40px;
+        right: 40px;
+      }
+    }
+
     .btn-add:hover {
       background: linear-gradient(45deg, #f0e130, #aabf24);
+      transform: scale(1.1);
+    }
+    .btn-add:active {
+      transform: scale(0.95);
+    }
+    
+    form {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      margin: 0;
+    }
+
+    @media (max-width: 767px) {
+      form {
+        bottom: 90px;
+        left: 10px;
+      }
+    }
+
+    .logout-btn {
+      padding: 10px 20px;
+      background: linear-gradient(45deg, #8bc34a, #558b2f);
+      color: #fffde7;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(85, 139, 47, 0.7);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .logout-btn {
+        padding: 12px 28px;
+        font-size: 1rem;
+      }
+    }
+
+    .logout-btn:hover {
+      background: linear-gradient(45deg, #689f38, #33691e);
+      box-shadow: 0 8px 20px rgba(51, 105, 30, 0.9);
+    }
+
+    .logout-btn:active {
+      transform: scale(0.95);
+    }
+
+    .no-reclamations {
+      color: #e6ee9c;
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-
-  <aside class="sidebar">
-    <h2>Menu</h2>
-    <div class="search-box">
-      <input type="search" placeholder="Rechercher..." aria-label="Recherche" />
-    </div>
-    <nav>
-      <a href="{% url 'accueil' %}">Accueil</a>
-      <a href="{% url 'mesreclamation' %}">Mes réclamations</a>
-      <a href="{% url 'reclamationsrealisees' %}">Réclamations réalisées</a>
-    </nav>
-    <form method="post" action="{% url 'LogoutPage' %}">
-      {% csrf_token %}
-      <button type="submit" class="logout-btn">Déconnexion</button>
-    </form>
-  </aside>
+  <form method="post" action="{% url 'LogoutPage' %}">
+    {% csrf_token %}
+    <button type="submit" class="logout-btn">Déconnexion</button>
+  </form>
 
   <main class="main-content">
-    <h1>Mes anciennes réclamations</h1>
+    <h1>Les réclamations de {{ request.user.citoyen.nom }} {{ request.user.citoyen.prenom }}</h1>
+    <p>Nombre de réclamations : {{ reclamations|length }}</p>
+
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <ul class="reclamation-list" id="reclamationList">
       {% if reclamations %}
         {% for rec in reclamations %}
-          <li class="reclamation-item">
+          <li class="reclamation-item" data-status="{{ rec.etat|lower }}" id="reclamation-{{ rec.id }}">
             {% if rec.image %}
               <img src="{{ rec.image.url }}" alt="Image réclamation" class="reclamation-image" />
             {% else %}
               <div class="reclamation-image">Pas d'image</div>
             {% endif %}
             <div class="reclamation-details">
-              <h3>{{ rec.type_reclamation }}</h3>
+              <h3>{{ rec.get_type_reclamation_display }}</h3>
               <p><strong>Localisation :</strong> {{ rec.localisation }}</p>
+              <p><strong>Statut :</strong> <span class="status-badge">{{ rec.etat }}</span></p>
               <p class="description-truncate">{{ rec.description }}</p>
-              <p><small>Signalée le {{ rec.date_creation|date:"d/m/Y" }}</small></p>
+              <p><small>Signalée le {{ rec.date_re|date:"d/m/Y à H:i" }}</small></p>
             </div>
-            <button class="btn-edit" onclick="window.location.href='{% url 'ADDreclamation' rec.id %}'">
-              Modifier
-            </button>
+
+            {% if rec.etat == "En attente" %}
+              <div class="reclamation-actions">
+                <button class="btn-delete" data-id="{{ rec.id }}" data-url="{% url 'supprimer_reclamation' rec.id %}">Supprimer</button>
+                <a href="{% url 'modifier_reclamation' rec.id %}" class="btn-edit">Modifier</a>
+              </div>
+            {% endif %}
           </li>
         {% endfor %}
       {% else %}
-        <li>Aucune réclamation enregistrée.</li>
+        <li class="no-reclamations">Aucune réclamation enregistrée.</li>
       {% endif %}
     </ul>
   </main>
 
-  <button class="btn-add" title="Ajouter une réclamation" onclick="window.location.href='{% url 'ADDreclamation' %}'">+</button>
+  <!-- Bouton d'ajout -->
+  <a href="{% url 'ADDreclamation' %}" class="btn-add" title="Ajouter une réclamation">+</a>
 
+  <script>
+    // Gestion de la suppression
+    document.querySelectorAll('.btn-delete').forEach(button => {
+      button.addEventListener('click', function() {
+        const recId = this.getAttribute('data-id');
+        const url = this.getAttribute('data-url');
+        
+        if (!confirm("Voulez-vous vraiment supprimer cette réclamation ?")) return;
+
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `csrfmiddlewaretoken={{ csrf_token }}`
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('La suppression a échoué');
+        })
+        .then(data => {
+          if (data.success) {
+            // Supprimer l'élément de la liste
+            const item = document.getElementById(`reclamation-${recId}`);
+            if (item) {
+              item.remove();
+              
+              // Mettre à jour le compteur
+              const countElement = document.querySelector('.main-content p:first-of-type');
+              if (countElement) {
+                const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]);
+                countElement.textContent = countElement.textContent.replace(/\d+/, currentCount - 1);
+              }
+              
+              // Si plus de réclamations, afficher le message
+              if (document.querySelectorAll('.reclamation-item').length === 0) {
+                const list = document.getElementById('reclamationList');
+                list.innerHTML = '<li class="no-reclamations">Aucune réclamation enregistrée.</li>';
+              }
+            }
+          } else {
+            alert(data.error || "Erreur lors de la suppression");
+          }
+        })
+        .catch(error => {
+          alert("Erreur: " + error.message);
+        });
+      });
+    });
+  </script>
 </body>
 </html>

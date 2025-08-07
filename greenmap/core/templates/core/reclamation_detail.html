@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Détails Réclamation #{{ reclamation.id }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4fff5;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    #map {
+      height: 600px;
+      width: 600px;
+      border-radius: 12px;
+      border: 2px solid #2e7d32;
+      flex-shrink: 0;
+    }
+    .details {
+      width: 400px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 100, 0, 0.2);
+      color: #2e7d32;
+      box-sizing: border-box;
+    }
+    .details h2 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+    .details p {
+      margin: 10px 0;
+      word-wrap: break-word;
+    }
+    .details span {
+      font-weight: bold;
+    }
+    .leaflet-popup-content {
+      text-align: center;
+      font-weight: bold;
+    }
+    /* Responsive */
+    @media (max-width: 1000px) {
+      body {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 15px;
+      }
+      #map, .details {
+        width: 90%;
+        height: auto;
+      }
+      #map {
+        height: 400px;
+        max-width: 600px;
+      }
+      .details {
+        max-width: 600px;
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      #map {
+        height: 300px;
+      }
+      .details {
+        padding: 15px;
+        font-size: 14px;
+      }
+      button {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div class="details">
+    <h2>Détails de la Réclamation #{{ reclamation.id }}</h2>
+    <p><span>Type :</span> {{ reclamation.type_reclamation }}</p>
+    <p><span>Code Postal :</span> {{ reclamation.code_postale.num }}</p>
+    <p><span>Localisation :</span> {{ reclamation.localisation }}</p>
+    <p><span>Description :</span> {{ reclamation.description }}</p>
+    <p><span>Latitude :</span> {{ reclamation.latitude }}</p>
+    <p><span>Longitude :</span> {{ reclamation.longitude }}</p>
+    
+    <form method="post" action="">
+      {% csrf_token %}
+      <p><span>État :</span>
+        <select name="etat" style="padding: 5px; margin-top: 5px; width: 100%;">
+          <option value="En attente" {% if reclamation.etat == 'En attente' %}selected{% endif %}>En attente</option>
+          <option value="Acceptée" {% if reclamation.etat == 'Acceptée' %}selected{% endif %}>Acceptée</option>
+          <option value="Rejetée" {% if reclamation.etat == 'Rejetée' %}selected{% endif %}>Rejetée</option>
+        </select>
+      </p>
+      <button type="submit" style="background-color: #2e7d32; color: white; border: none; padding: 10px 15px; border-radius: 5px; width: 100%;">Mettre à jour</button>
+    </form>
+  
+    {% if reclamation.image %}
+      <p><span>Image :</span><br><img src="{{ reclamation.image.url }}" alt="Image de la réclamation" style="max-width: 100%; border-radius: 8px; margin-top: 10px;"></p>
+    {% endif %}
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        const cleanCoord = (coord) => {
+          if (!coord) return null;
+          const str = coord.toString().replace(/"/g, '').replace(/,/g, '.').trim();
+          const num = parseFloat(str);
+          return isNaN(num) ? null : num;
+        };
+
+        const lat = cleanCoord("{{ reclamation.latitude }}") || 36.8;
+        const lng = cleanCoord("{{ reclamation.longitude }}") || 10.2;
+
+        const map = L.map('map').setView([lat, lng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+
+        const marker = L.marker([lat, lng]).addTo(map);
+        
+        const popupContent = `
+          <div style="text-align: center;">
+            <b>Localisation:</b><br>
+            ${"{{ reclamation.localisation|escapejs }}" || "Localisation non spécifiée"}
+          </div>
+        `;
+        
+        marker.bindPopup(popupContent).openPopup();
+
+      } catch (error) {
+        console.error('Erreur:', error);
+        document.getElementById('map').innerHTML = `
+          <div style="color: red; padding: 20px; text-align: center;">
+            Erreur lors du chargement de la carte
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

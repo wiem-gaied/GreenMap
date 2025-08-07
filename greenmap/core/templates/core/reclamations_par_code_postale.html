@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Réclamations de votre zone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .reclamation-box {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease;
+            align-items: center;
+        }
+        .reclamation-box:hover {
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        }
+        .photo {
+            flex-shrink: 0;
+            width: 140px;
+            height: 100px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+        .details {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .details > div {
+            margin-bottom: 8px;
+            word-wrap: break-word;
+        }
+        .etat-select {
+            max-width: 150px;
+            padding: 6px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+        }
+        .success-msg {
+            color: green;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .reclamation-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .photo {
+                width: 100%;
+                height: 200px;
+                margin-bottom: 10px;
+            }
+            .details {
+                flex-grow: unset;
+            }
+            .etat-select {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            .reclamation-box {
+                padding: 10px;
+            }
+            .photo {
+                height: 150px;
+            }
+            .etat-select {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+
+        /* Bouton Déconnexion */
+        .logout-form {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .logout-button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .logout-button i {
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Réclamations de votre zone (Code Postal : {{ agent.code_postale.num }})</h2>
+
+        {% if reclamations %}
+            {% for r in reclamations %}
+                <div class="reclamation-box" onclick="window.open('/reclamation/{{ r.id }}/', '_blank')">
+                    <div class="photo" onclick="event.stopPropagation();">
+                        {% if r.image %}
+                            <img src="{{ r.image.url }}" alt="Photo réclamation" />
+                        {% else %}
+                            <em>Pas de photo</em>
+                        {% endif %}
+                    </div>
+                    <div class="details">
+                        <div><strong>Titre :</strong> {{ r.type_reclamation }}</div>
+                        <div><strong>Description :</strong> {{ r.description|truncatechars:100 }}</div>
+                        <div><strong>Localisation :</strong> {{ r.localisation }}</div>
+                        <div><strong>Latitude :</strong> {{ r.latitude }} | <strong>Longitude :</strong> {{ r.longitude }}</div>
+                        <div>
+                            <label for="etat-{{ r.id }}"><strong>État :</strong></label>
+                            <select id="etat-{{ r.id }}" class="etat-select" onchange="changerEtat({{ r.id }}, this.value)" onclick="event.stopPropagation();">
+                                <option value="En attente" {% if r.etat == "En attente" %}selected{% endif %}>En attente</option>
+                                <option value="Acceptée" {% if r.etat == "Acceptée" %}selected{% endif %}>Acceptée</option>
+                                <option value="Rejetée" {% if r.etat == "Rejetée" %}selected{% endif %}>Rejetée</option>
+                            </select>
+                            <div id="message-{{ r.id }}" class="success-msg"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucune réclamation trouvée pour votre code postal.</p>
+        {% endif %}
+
+        <div class="logout-form">
+            <form method="post" action="{% url 'LogoutPage' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </form>
+        </div>
+    </div>
+
+<script>
+    function changerEtat(reclamationId, nouvelEtat) {
+        fetch(`/agent/reclamations/modifier-etat/${reclamationId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ "etat": nouvelEtat })
+        })
+        .then(response => {
+            const msgEl = document.getElementById("message-" + reclamationId);
+            if (response.ok) {
+                msgEl.innerText = "État mis à jour ✔";
+                setTimeout(() => { msgEl.innerText = ""; }, 3000);
+            } else {
+                msgEl.innerText = "Erreur de mise à jour";
+            }
+        })
+        .catch(() => {
+            const msgEl = document.getElementById("message-" + reclamationId);
+            msgEl.innerText = "Erreur de mise à jour";
+        });
+    }
+</script>
+</body>
+</html>

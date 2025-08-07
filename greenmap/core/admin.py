@@ -5,3 +5,5 @@ admin.site.register(Citoyen)
 admin.site.register(Agent)
 admin.site.register(CodePostale)
 admin.site.register(Reclamation)
+
+

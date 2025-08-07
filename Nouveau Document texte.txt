@@ -1,0 +1,43 @@
+testa3ml el bootstrap bch todhher 9ochaliha mobile
+fl signup thot lagent mn enou baldia
+Django fontionnalite globale ipik
+agnet crute => gestion des réclamations
+=> authentification
+witoyen andou lha9 ymodifi w yfasakh ken ki status tabda en attente
+Leaflet draw
+
+netfehmou aal type des réclamations, metal belar plastique, ,,palette, 
+
+
+authentififcation: melouwel takhtar enty chkoun citoyen wela agent w hasb el type tetla3lak interface mta authentification (signup) w fl login naf les donnes yethatou w hasb el base donne ywajhak ll interface ta agent wela signup
+
+lagent me yaccedi ll compte mte3ou ken me ladmin yvaladlou el compte mte3ou
+
+el wireguard
+fl agent nhotouh 
+midelware
+yodkhol lagent adi ll compte mte3ou ema ki yebda mch halel lvpn tthalou linterface ken mch halel vpn yhotlk msg y9olak rak mkch halel el vpn wela l@ ghalat wmeytala3lou hata donnée
+
+===========responsive====
+
+*athentification
+-nzid interface ta agent
+-nbadel el partie ta "je suis" melouwel(9bal el signup) wenahiha mel login
+-login ynajem yestamlou el citoyen w lagent w hasb el donnes el msajlin y3adik ll interface mte3ak
+
+*gestion des réclamations
+-najouti botton chnmodifi w nsuprimi mes anciennes réclamations(juste ken letat mezel en attent sinnon el botton et bloqué)
+-el reclamation nrakez ala fazet el Leaflet Draw
+-enregistrement des donnes 
+-norbot les donnes enregistré mn and el citoyen beli yetl3ou ll agent (hasb une condition mou3ayna eli hya el baladia mte3ou wela code postale wela ay haja)
+
+
+
+-------------------------------------------------
+-------------------------------------------------
+---------------------------------------------------
+-nrigel el fichier kima doua ta lbaladia
+-nrigel el responsive design
+-njareb naml des comptes okhryn bch nverifi eli kol citoyen yetl3oulou les réclamations mte3ou w kol agent yetla3lou les réclamations filtré par codepostale
+
+
