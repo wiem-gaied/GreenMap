@@ -8,17 +8,14 @@ from .models import Agent, CodePostale
 
 
 class ReclamationForm(forms.ModelForm):
+    code_postale = forms.ModelChoiceField(
+        queryset=CodePostale.objects.all().order_by('zip'),
+        empty_label="Sélectionnez un code postal"
+    )
+
     class Meta:
         model = Reclamation
-        fields = [
-            'type_reclamation',
-            'description',
-            'localisation',
-            'latitude',
-            'longitude',
-            'image',
-            'code_postale'
-        ]
+        fields = ['type_reclamation', 'description', 'localisation', 'latitude', 'longitude', 'code_postale']
         labels = {
             'type_reclamation': 'Type de réclamation',
             'description': 'Description',

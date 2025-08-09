@@ -6,11 +6,13 @@ from django.contrib.auth.models import User
 # Code Postale
 # ----------------------------
 class CodePostale(models.Model):
-    num = models.CharField(max_length=10, unique=True)
-
+    gov = models.CharField(max_length=100)
+    deleg = models.CharField(max_length=100)
+    cite = models.CharField(max_length=100)
+    zip = models.CharField(max_length=10, unique=True)
 
     def __str__(self):
-        return self.num
+        return f"{self.zip} - {self.cite}"
 
 class Citoyen(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -20,10 +20,6 @@ from .forms import AgentRegisterForm
 
 
 
-#def home(request):
-#   return render(request, 'core/reclamation.html')
-
-
 def choisir(request):
     return render(request, 'core/choisir.html')
 
@@ -114,7 +110,7 @@ def save_point(request):
 
         # Récupérer l'objet CodePostale
         try:
-            code_postale = CodePostale.objects.get(num=code_postale)
+            code_postale = CodePostale.objects.get(zip=code_postale)
         except CodePostale.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Code postal introuvable'})
 
@@ -219,7 +215,7 @@ def supprimer_reclamation(request, id):
 def LogoutPage(request):
     logout(request)
     return redirect('choisir')
-    
+
 
 def AgentReclamations(request):
     # Vérifie si l'agent est connecté via la session

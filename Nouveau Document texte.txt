@@ -36,8 +36,9 @@ yodkhol lagent adi ll compte mte3ou ema ki yebda mch halel lvpn tthalou linterfa
 -------------------------------------------------
 -------------------------------------------------
 ---------------------------------------------------
--nrigel el fichier kima doua ta lbaladia
--nrigel el responsive design
--njareb naml des comptes okhryn bch nverifi eli kol citoyen yetl3oulou les réclamations mte3ou w kol agent yetla3lou les réclamations filtré par codepostale
+-nsafi elzeyed lkol##############
+-nrigel el fichier kima doua ta lbaladia#############
+-nrigel el responsive design#############
+-njareb naml des comptes okhryn bch nverifi eli kol citoyen yetl3oulou les réclamations mte3ou w kol agent yetla3lou les réclamations filtré par codepostale##########
 
 

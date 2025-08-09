@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
 
+    
   <style>
     * {
       box-sizing: border-box;
@@ -121,7 +122,10 @@
       </select>
 
       <label for="postal_code">Code postal :</label>
-      <input type="text" id="postal_code" required />
+      <select id="postal_code" required>
+        <option value="">-- Sélectionnez un code postal --</option>
+      </select>
+
 
       <label for="localisation">Localisation :</label>
       <input type="text" id="localisation" required />
@@ -222,6 +226,21 @@
         alert('Une erreur est survenue.');
       });
     });
+
+    fetch('/static/core/zip-postcodes.json')
+  .then(response => response.json())
+  .then(data => {
+    const select = document.getElementById('postal_code');
+    data.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item.zip;
+      option.textContent = `${item.zip} - ${item.Cite}`;
+      select.appendChild(option);
+    });
+  })
+  .catch(err => {
+    console.error('Erreur chargement codes postaux:', err);
+  });
 
     function getCookie(name) {
       let cookieValue = null;

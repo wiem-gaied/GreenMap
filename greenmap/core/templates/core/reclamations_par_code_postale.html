@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -131,11 +133,11 @@
 </head>
 <body>
     <div class="container">
-        <h2>Réclamations de votre zone (Code Postal : {{ agent.code_postale.num }})</h2>
+        <h2>Réclamations de votre zone (Code Postal : {{ agent.code_postale.zip|default:"Non défini" }})</h2>
 
         {% if reclamations %}
             {% for r in reclamations %}
-                <div class="reclamation-box" onclick="window.open('/reclamation/{{ r.id }}/', '_blank')">
+                <div class="reclamation-box" onclick="window.open('{% url 'reclamation_detail' r.id %}', '_blank')">
                     <div class="photo" onclick="event.stopPropagation();">
                         {% if r.image %}
                             <img src="{{ r.image.url }}" alt="Photo réclamation" />
@@ -150,7 +152,9 @@
                         <div><strong>Latitude :</strong> {{ r.latitude }} | <strong>Longitude :</strong> {{ r.longitude }}</div>
                         <div>
                             <label for="etat-{{ r.id }}"><strong>État :</strong></label>
-                            <select id="etat-{{ r.id }}" class="etat-select" onchange="changerEtat({{ r.id }}, this.value)" onclick="event.stopPropagation();">
+                            <select id="etat-{{ r.id }}" class="etat-select"
+                                    onchange="changerEtat({{ r.id }}, this.value)"
+                                    onclick="event.stopPropagation();">
                                 <option value="En attente" {% if r.etat == "En attente" %}selected{% endif %}>En attente</option>
                                 <option value="Acceptée" {% if r.etat == "Acceptée" %}selected{% endif %}>Acceptée</option>
                                 <option value="Rejetée" {% if r.etat == "Rejetée" %}selected{% endif %}>Rejetée</option>

@@ -3,7 +3,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Créer un compte - GreenMap</title>
+  <title>Créer un compte - CityCare</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet" />
   <style>
     /* Reset et base */
@@ -86,7 +86,7 @@
     .login-link a:hover {
       text-decoration: underline;
     }
-    /* Messages d’erreur */
+    /* Messages d'erreur */
     .error-message {
       color: #d93025;
       font-size: 0.85rem;
@@ -182,5 +182,23 @@
       Vous avez déjà un compte ? <a href="{% url 'login_agent' %}">Se connecter</a>
     </div>
   </form>
+
+  <script>
+      fetch('/static/core/zip-postcodes.json')
+  .then(response => response.json())
+  .then(data => {
+    const select = document.getElementById('postal_code');
+    data.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item.zip;
+      option.textContent = `${item.zip} - ${item.Cite}`;
+      select.appendChild(option);
+    });
+  })
+  .catch(err => {
+    console.error('Erreur chargement codes postaux:', err);
+  });
+
+  </script>
 </body>
 </html>
